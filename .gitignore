@@ -1,0 +1,33 @@
+# ESP-IDF
+build/
+sdkconfig
+sdkconfig.old
+dependencies.lock
+managed_components/
+.cache/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# macOS
+.DS_Store
+
+# IDEs
+.vscode/
+.idea/
+.clangd/
+
+# CMake / Make
+CMakeCache.txt
+CMakeFiles/
+Makefile
+cmake_install.cmake
+*.obj
+*.o
+*.a
+*.elf
+*.bin
+*.map
