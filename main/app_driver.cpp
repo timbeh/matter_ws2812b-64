@@ -120,7 +120,19 @@ static esp_err_t app_driver_update_leds() {
       temp_to_rgb(light_mireds, light_level, &r, &g, &b);
   }
 
-  ESP_LOGI(TAG, "Setting RGB: R=%d, G=%d, B=%d (Mode=%d)", r, g, b, light_color_mode);
+  // WS2812B White Balance Correction
+  // These LEDs typically have very strong Blue and Green channels
+  // compared to Red. We scale them down to get a warmer, more natural white.
+  // Tuning these values allows you to shift the "pure white" point.
+  float wb_r = 1.0f;   // Red kept at 100%
+  float wb_g = 0.75f;  // Green slightly reduced
+  float wb_b = 0.50f;  // Blue drastically reduced to warm everything up
+
+  uint8_t final_r = (uint8_t)(r * wb_r);
+  uint8_t final_g = (uint8_t)(g * wb_g);
+  uint8_t final_b = (uint8_t)(b * wb_b);
+
+  ESP_LOGI(TAG, "Setting RGB: R=%d, G=%d, B=%d (Mode=%d) | Corrected: %d, %d, %d", r, g, b, light_color_mode, final_r, final_g, final_b);
 
   // Apply color to all 64 LEDs
   for (int i = 0; i < LED_STRIP_MAX_LEDS; i++) {
@@ -128,7 +140,7 @@ static esp_err_t app_driver_update_leds() {
     // Based on user report: Red -> Blue, White -> Turquoise, Yellow -> Green
     // This suggests Arg 1 (R) maps to Blue, and maybe other swaps.
     // For now, let's keep it standard and use the log to diagnose.
-    led_strip->set_pixel(led_strip, i, r, g, b);
+    led_strip->set_pixel(led_strip, i, final_r, final_g, final_b);
   }
 
   return led_strip->refresh(led_strip, 50);

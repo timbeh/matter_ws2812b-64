@@ -20,16 +20,21 @@ This project provides firmware for ESP32 chips to control a WS2812B LED Matrix (
 - [ESP-Matter SDK](https://github.com/espressif/esp-matter) properly installed and environment exported (`export.sh`).
 
 ## Build and Flash
+1. Set ESP-IDF and ESP-Matter export paths (adjust to your installation paths):
+   ```bash
+   source ~/esp/esp-idf/export.sh
+   source ~/esp/esp-matter/export.sh
+   ```
 
-1. Configure the project for your target (e.g., esp32c3):
+2. Configure the project for your target (e.g., esp32c3):
    ```bash
    idf.py set-target esp32c3
    ```
-2. Build the project:
+3. Build the project:
    ```bash
    idf.py build
    ```
-3. Flash and monitor output to find the commissioning QR code/pairing code:
+4. Flash and monitor output to find the commissioning QR code/pairing code:
    ```bash
    idf.py flash monitor
    ```
