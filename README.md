@@ -1,6 +1,6 @@
 # ESP32 Matter LED Matrix Controller
 
-This project provides firmware for ESP32 chips to control a WS2812B LED Matrix (e.g., 8x8 WS2812B-43) over the Matter protocol, exposing it as an Extended Color Light device and allowing integration into smart home ecosystems like Apple HomeKit.
+This project provides firmware for ESP32 chips to control a WS2812B LED Matrix (e.g., 8x8 WS2812B-64) over the Matter protocol, exposing it as an Extended Color Light device and allowing integration into smart home ecosystems like Apple HomeKit.
 
 ## Features
 
