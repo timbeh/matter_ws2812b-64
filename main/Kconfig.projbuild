@@ -1,11 +1,27 @@
-menu "Example Configuration"
+menu "WS2812B Configuration"
 
-    config ENABLE_MEMORY_PROFILING
-        bool "Enable Memory Profiling"
-        default n
+    config LED_STRIP_GPIO_PIN
+        int "LED Strip GPIO Pin"
+        default 8
         help
-            Enable this option to include memory profiling features in the example.
-            This will allow you to monitor memory usage during runtime.
+            GPIO pin for the WS2812B data line.
+
+    config LED_STRIP_MAX_LEDS
+        int "Maximum number of LEDs"
+        default 64
+        help
+            Number of LEDs in the strip.
+
+    config LED_STRIP_MAX_CURRENT_MA
+        int "Maximum Current Limit (mA)"
+        default 1500
+        help
+            Maximum overall current for the LED strip.
+
+    config LED_STRIP_GLOBAL_BRIGHTNESS_CAP
+        int "Global Brightness Cap (0-255)"
+        default 255
+        help
+            Maximum allowable brightness value.
 
 endmenu
-
