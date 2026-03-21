@@ -134,12 +134,30 @@ static void renderer_task(void *arg) {
             float g_f = g * wb_g * brightness_f;
             float b_f = b * wb_b * brightness_f;
 
-            float current_estimate_ma = (r_f/255.0f + g_f/255.0f + b_f/255.0f) * 20.0f * CONFIG_LED_STRIP_MAX_LEDS;
+            // Dynamic Power Model (WS2812B specific):
+            // 1. Quiescent Current: Each WS2812B IC draws ~1mA just to power the internal logic.
+            // 2. Channel Current: Each color channel (R,G,B) draws ~20mA at full (255) intensity.
+            float quiescent_ma = (float)CONFIG_LED_STRIP_MAX_LEDS * 1.0f;
+            float r_draw_ma = (r_f / 255.0f) * 20.0f * CONFIG_LED_STRIP_MAX_LEDS;
+            float g_draw_ma = (g_f / 255.0f) * 20.0f * CONFIG_LED_STRIP_MAX_LEDS;
+            float b_draw_ma = (b_f / 255.0f) * 20.0f * CONFIG_LED_STRIP_MAX_LEDS;
+
+            float current_estimate_ma = quiescent_ma + r_draw_ma + g_draw_ma + b_draw_ma;
+            
             if (current_estimate_ma > CONFIG_LED_STRIP_MAX_CURRENT_MA) {
-                float scaling_factor = (float)CONFIG_LED_STRIP_MAX_CURRENT_MA / current_estimate_ma;
+                // If we are over the limit, calculate how much headroom we have left 
+                // after the quiescent draw is subtracted.
+                float available_for_leds = (float)CONFIG_LED_STRIP_MAX_CURRENT_MA - quiescent_ma;
+                if (available_for_leds < 0) available_for_leds = 0;
+
+                float requested_for_leds = r_draw_ma + g_draw_ma + b_draw_ma;
+                float scaling_factor = available_for_leds / requested_for_leds;
+
                 r_f *= scaling_factor;
                 g_f *= scaling_factor;
                 b_f *= scaling_factor;
+                ESP_LOGI(TAG, "Dynamic Limit: Scaling by %.2f to stay under %dmA (Estimate was %.0fmA)", 
+                         scaling_factor, CONFIG_LED_STRIP_MAX_CURRENT_MA, current_estimate_ma);
             }
 
             uint8_t fn_r = (uint8_t)fmaxf(0, fminf(255, r_f));
